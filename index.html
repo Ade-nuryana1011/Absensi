@@ -9,10 +9,10 @@
             flex-direction: column;
             align-items: center;
             padding-top: 50px;
-            background-image: url('mrt.jpg'); /* Tambahkan background image */
-            background-size: cover; /* Agar gambar menutupi seluruh area */
-            background-repeat: no-repeat; /* Agar gambar tidak diulang */
-            color: white; /* Ubah warna teks agar terlihat di atas background */
+            background-image: url('mrt.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            color: white;
         }
         .container {
             display: flex;
@@ -20,14 +20,14 @@
             gap: 10px;
             width: 300px;
             padding: 20px;
-            background-color: rgba(0, 0, 0, 0.5); /* Tambahkan sedikit transparansi pada container */
+            background-color: rgba(0, 0, 0, 0.5);
             border-radius: 10px;
         }
         input[type="text"] {
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            color: black; /* Pastikan teks input terlihat */
+            color: black;
         }
         button {
             padding: 10px 15px;
@@ -61,40 +61,6 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxoCA8XZc7F4nJ938LPKdYqmfMx7lxr6x147TrRhP3WdXA38KH8zrzYH8POb9FwSVI/exec';
 
-       function absen(jenisAbsen) {
-    console.log('Tombol absen diklik'); // Tambahkan baris ini
-    const namaInput = document.getElementById('nama');
-    const nama = namaInput.value.trim();
-    const messageDiv = document.getElementById('message');
-
-    if (!nama) {
-        alert('Nama pekerja harus diisi.');
-        return;
-    }
-
-    // ... sisa kode fungsi absen() ...
-        }
-
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(position => {
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
-                   }, error => { // Ini adalah penutup untuk error callback getCurrentPosition
-                    let errorMessage = "Lokasi tidak dapat diakses.";
-                    if (error.code === error.PERMISSION_DENIED) {
-                        errorMessage = "Izin lokasi ditolak. Mohon aktifkan lokasi Anda.";
-                    }
-                    alert(errorMessage);
-                    // Anda bisa memilih untuk tetap mengirim absensi tanpa lokasi di sini jika perlu
-                    kirimAbsensi(nama, jenisAbsen, null, null, errorMessage);
-                }); // Tutup getCurrentPosition
-            } else {
-                const lokasi = 'Geolocation tidak didukung oleh browser ini.';
-                kirimAbsensi(nama, jenisAbsen, null, null, lokasi);
-            }
-        }
-                  
-            } else {
         function kirimAbsensi(nama, absen, latitude, longitude, lokasi) {
             const messageDiv = document.getElementById('message');
             fetch(scriptURL, {
@@ -104,15 +70,46 @@
                 },
                 body: JSON.stringify({ nama: nama, absen: absen, latitude: latitude, longitude: longitude, lokasi: lokasi })
             })
-            .then(response => response.text()) // Mengambil response sebagai text karena script Anda mengembalikan text
+            .then(response => response.text())
             .then(data => {
-                messageDiv.textContent = data; // Menampilkan pesan dari script
-                document.getElementById('nama').value = ''; // Bersihkan input
+                messageDiv.textContent = data;
+                document.getElementById('nama').value = '';
             })
             .catch((error) => {
                 console.error('Error:', error);
                 messageDiv.textContent = 'Terjadi kesalahan saat mengirim data absensi.';
             });
+        }
+
+        function absen(jenisAbsen) {
+            console.log('Tombol absen diklik');
+            const namaInput = document.getElementById('nama');
+            const nama = namaInput.value.trim();
+            const messageDiv = document.getElementById('message');
+
+            if (!nama) {
+                alert('Nama pekerja harus diisi.');
+                return;
+            }
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    const lokasi = `Latitude: ${latitude}, Longitude: ${longitude}`;
+                    kirimAbsensi(nama, jenisAbsen, latitude, longitude, lokasi);
+                }, error => {
+                    let errorMessage = "Lokasi tidak dapat diakses.";
+                    if (error.code === error.PERMISSION_DENIED) {
+                        errorMessage = "Izin lokasi ditolak. Mohon aktifkan lokasi Anda.";
+                    }
+                    alert(errorMessage);
+                    kirimAbsensi(nama, jenisAbsen, null, null, errorMessage); // Kirim tanpa lokasi jika gagal
+                });
+            } else {
+                const lokasi = 'Geolocation tidak didukung oleh browser ini.';
+                kirimAbsensi(nama, jenisAbsen, null, null, lokasi);
+            }
         }
     </script>
 </body>
