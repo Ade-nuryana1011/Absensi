@@ -61,15 +61,19 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxoCA8XZc7F4nJ938LPKdYqmfMx7lxr6x147TrRhP3WdXA38KH8zrzYH8POb9FwSVI/exec';
 
-        function absen(jenisAbsen) {
-            const namaInput = document.getElementById('nama');
-            const nama = namaInput.value.trim();
-            const messageDiv = document.getElementById('message');
+       function absen(jenisAbsen) {
+    console.log('Tombol absen diklik'); // Tambahkan baris ini
+    const namaInput = document.getElementById('nama');
+    const nama = namaInput.value.trim();
+    const messageDiv = document.getElementById('message');
 
-            if (!nama) {
-                alert('Nama pekerja harus diisi.');
-                return;
-            }
+    if (!nama) {
+        alert('Nama pekerja harus diisi.');
+        return;
+    }
+
+    // ... sisa kode fungsi absen() ...
+        }
 
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
