@@ -79,23 +79,22 @@
                 navigator.geolocation.getCurrentPosition(position => {
                     const latitude = position.coords.latitude;
                     const longitude = position.coords.longitude;
-                    const lokasi = `Latitude: ${latitude}, Longitude: ${longitude}`;
-                    kirimAbsensi(nama, jenisAbsen, latitude, longitude, lokasi);
-                }, error => {
+                   }, error => { // Ini adalah penutup untuk error callback getCurrentPosition
                     let errorMessage = "Lokasi tidak dapat diakses.";
                     if (error.code === error.PERMISSION_DENIED) {
                         errorMessage = "Izin lokasi ditolak. Mohon aktifkan lokasi Anda.";
                     }
                     alert(errorMessage);
                     // Anda bisa memilih untuk tetap mengirim absensi tanpa lokasi di sini jika perlu
-                    // kirimAbsensi(nama, jenisAbsen, null, null, errorMessage);
-                });
+                    kirimAbsensi(nama, jenisAbsen, null, null, errorMessage);
+                }); // Tutup getCurrentPosition
             } else {
                 const lokasi = 'Geolocation tidak didukung oleh browser ini.';
                 kirimAbsensi(nama, jenisAbsen, null, null, lokasi);
             }
         }
-
+                  
+            } else {
         function kirimAbsensi(nama, absen, latitude, longitude, lokasi) {
             const messageDiv = document.getElementById('message');
             fetch(scriptURL, {
