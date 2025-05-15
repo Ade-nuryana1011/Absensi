@@ -53,8 +53,8 @@
     <h1>Absensi Pekerja</h1>
     <div class="container">
         <input type="text" id="nama" placeholder="Nama Pekerja" required>
-        <button onclick="absen('Masuk')">Absen Masuk</button>
-        <button onclick="absen('Keluar')">Absen Keluar</button>
+        <button id="absenMasuk">Absen Masuk</button>
+        <button id="absenKeluar">Absen Keluar</button>
         <div id="message"></div>
     </div>
 
@@ -110,6 +110,19 @@
                 kirimAbsensi(nama, jenisAbsen, null, null, lokasi);
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+          const absenMasukButton = document.getElementById('absenMasuk');
+          const absenKeluarButton = document.getElementById('absenKeluar');
+
+          absenMasukButton.addEventListener('click', function() {
+            absen('Masuk');
+          });
+
+          absenKeluarButton.addEventListener('click', function() {
+            absen('Keluar');
+          });
+        });
     </script>
 </body>
 </html>
