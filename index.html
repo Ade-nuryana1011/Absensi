@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Absensi Pekerja</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 50px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 300px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #message {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Absensi Pekerja</h1>
+    <div class="container">
+        <input type="text" id="nama" placeholder="Nama Pekerja" required>
+        <button onclick="absen('Masuk')">Absen Masuk</button>
+        <button onclick="absen('Keluar')">Absen Keluar</button>
+        <div id="message"></div>
+    </div>
+
+    <script>
+     const scriptURL = 'https://script.google.com/macros/s/AKfycbxoCA8XZc7F4nJ938LPKdYqmfMx7lxr6x147TrRhP3WdXA38KH8zrzYH8POb9FwSVI/exec';            const namaInput = document.getElementById('nama');
+            const nama = namaInput.value.trim();
+            const messageDiv = document.getElementById('message');
+
+            if (!nama) {
+                alert('Nama pekerja harus diisi.');
+                return;
+            }
+
+            fetch(scriptURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ nama: nama, jenis: jenis })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result === 'success') {
+                    messageDiv.textContent = `Absen ${jenis} berhasil dicatat untuk ${nama}.`;
+                    namaInput.value = ''; // Bersihkan input setelah berhasil
+                } else {
+                    messageDiv.textContent = 'Terjadi kesalahan saat mencatat absensi.';
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                messageDiv.textContent = 'Terjadi kesalahan jaringan.';
+            });
+        }
+    </script>
+</body>
+</html>
