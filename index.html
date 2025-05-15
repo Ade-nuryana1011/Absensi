@@ -9,17 +9,25 @@
             flex-direction: column;
             align-items: center;
             padding-top: 50px;
+            background-image: url('mrt.jpg'); /* Tambahkan background image */
+            background-size: cover; /* Agar gambar menutupi seluruh area */
+            background-repeat: no-repeat; /* Agar gambar tidak diulang */
+            color: white; /* Ubah warna teks agar terlihat di atas background */
         }
         .container {
             display: flex;
             flex-direction: column;
             gap: 10px;
             width: 300px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.5); /* Tambahkan sedikit transparansi pada container */
+            border-radius: 10px;
         }
         input[type="text"] {
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            color: black; /* Pastikan teks input terlihat */
         }
         button {
             padding: 10px 15px;
@@ -36,6 +44,9 @@
             margin-top: 20px;
             font-weight: bold;
         }
+        h1 {
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -48,7 +59,10 @@
     </div>
 
     <script>
-     const scriptURL = 'https://script.google.com/macros/s/AKfycbxoCA8XZc7F4nJ938LPKdYqmfMx7lxr6x147TrRhP3WdXA38KH8zrzYH8POb9FwSVI/exec';            const namaInput = document.getElementById('nama');
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxoCA8XZc7F4nJ938LPKdYqmfMx7lxr6x147TrRhP3WdXA38KH8zrzYH8POb9FwSVI/exec';
+
+        function absen(jenisAbsen) {
+            const namaInput = document.getElementById('nama');
             const nama = namaInput.value.trim();
             const messageDiv = document.getElementById('message');
 
@@ -57,25 +71,44 @@
                 return;
             }
 
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    const lokasi = `Latitude: ${latitude}, Longitude: ${longitude}`;
+                    kirimAbsensi(nama, jenisAbsen, latitude, longitude, lokasi);
+                }, error => {
+                    let errorMessage = "Lokasi tidak dapat diakses.";
+                    if (error.code === error.PERMISSION_DENIED) {
+                        errorMessage = "Izin lokasi ditolak. Mohon aktifkan lokasi Anda.";
+                    }
+                    alert(errorMessage);
+                    // Anda bisa memilih untuk tetap mengirim absensi tanpa lokasi di sini jika perlu
+                    // kirimAbsensi(nama, jenisAbsen, null, null, errorMessage);
+                });
+            } else {
+                const lokasi = 'Geolocation tidak didukung oleh browser ini.';
+                kirimAbsensi(nama, jenisAbsen, null, null, lokasi);
+            }
+        }
+
+        function kirimAbsensi(nama, absen, latitude, longitude, lokasi) {
+            const messageDiv = document.getElementById('message');
             fetch(scriptURL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ nama: nama, jenis: jenis })
+                body: JSON.stringify({ nama: nama, absen: absen, latitude: latitude, longitude: longitude, lokasi: lokasi })
             })
-            .then(response => response.json())
+            .then(response => response.text()) // Mengambil response sebagai text karena script Anda mengembalikan text
             .then(data => {
-                if (data.result === 'success') {
-                    messageDiv.textContent = `Absen ${jenis} berhasil dicatat untuk ${nama}.`;
-                    namaInput.value = ''; // Bersihkan input setelah berhasil
-                } else {
-                    messageDiv.textContent = 'Terjadi kesalahan saat mencatat absensi.';
-                }
+                messageDiv.textContent = data; // Menampilkan pesan dari script
+                document.getElementById('nama').value = ''; // Bersihkan input
             })
             .catch((error) => {
                 console.error('Error:', error);
-                messageDiv.textContent = 'Terjadi kesalahan jaringan.';
+                messageDiv.textContent = 'Terjadi kesalahan saat mengirim data absensi.';
             });
         }
     </script>
